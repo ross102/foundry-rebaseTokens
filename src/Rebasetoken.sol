@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-import { ERC20 } from "@openzepplin/contracts/token/ERC20";
+import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -15,7 +15,7 @@ import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol"
 
 contract RebaseToken is ERC20, Ownable, AccessControl {
     // errors
-    error RebaseToken__InteresRateCanOnlyDecrease();
+    error RebaseToken__InteresRateCanOnlyDecrease(uint256 previousRate, uint256 newInterestRate);
     
     // state variables
     bytes32 private constant MINT_AND_BURN_ROLE = keccak256("MINT_AND_BURN_ROLE");
@@ -27,7 +27,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
     
     //events
-    event interestRateSet(uint256 newInterestRate)
+    event interestRateSet(uint256 newInterestRate);
 
 
     constructor() ERC20("Rebase Token", "RBT") Ownable(msg.sender)  {
@@ -35,7 +35,7 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
       /**
     * @notice - Grant mint and burn role to the account
-    * @param - _account: The account to grant mint and burn role to   
+    * @param _account - : The account to grant mint and burn role to   
     * 
     */
     function grantMintAndBurnRole(address _account) external onlyOwner {
@@ -44,20 +44,16 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
    /**
     * @notice - set the new interest rate to set
-    * @param - _newInterestRate: The new interest rate to set  
+    * @param  _newInterestRate: The new interest rate to set  
     * @dev - The interest rate can only decrease
     */
    function setInterestRate(uint256 _newInterestRate) external onlyOwner {
        if(_newInterestRate > s_interestRate) {
-         revert RebaseToken__InteresRateCanOnlyDecrease(s_interestRate, _newInterestRate)
+         revert RebaseToken__InteresRateCanOnlyDecrease(s_interestRate, _newInterestRate);
        }
          // set the interest rate
-         s_interestRate = _newInterestRate
-         emit interestRateSet(_newInterestRate)
-    }
-
-    function setUsersInterestRate(address _to) external {
-        s_userInterestRate[_to] = s_interestRate
+         s_interestRate = _newInterestRate;
+         emit interestRateSet(_newInterestRate);
     }
      
     function principalBalanceOf(address _user) external view returns(uint256) {
@@ -66,27 +62,27 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
     /**
      * @notice - Get the principal balance not including the interest
-     * @param - _user:  The uuser address
+     * @param  _user:  The uuser address
      */
-    function balanceOf(address _user) public view overrides returns(uint) {
+    function balanceOf(address _user) public view override returns(uint) {
         // get the principal balance of tokens (The number of tokens 
         // the user actually has)
         // multiple the principal balance with the interest that has accumulated
-         return  super.balanceOf(_user) * calculateUserAccumulatedInterestSinceLastUpdate(_user) / PRECISION_FACTOR
+         return  super.balanceOf(_user) * calculateUserAccumulatedInterestSinceLastUpdate(_user) / PRECISION_FACTOR;
 
     }
      /**
       * @notice - transfer tokens from one user to another
-      * @param - _to : the user to receive the tokens
-      * @param - _amount: the amount to transfer
-      * @return - returns a boolean
+      * @param  _to : the user to receive the tokens
+      * @param  _amount: the amount to transfer
+      * @return  bool: a boolean
       */
     function transfer(address _to, uint256 _amount) public override returns (bool) {
         _mintAccruedInterest(msg.sender);
         _mintAccruedInterest(_to);
 
         if(_amount == type(uint256).max) {
-            amount = balanceOf(msg.sender);
+            _amount = balanceOf(msg.sender);
         }
 
         if(balanceOf(_to) == 0) {
@@ -98,17 +94,17 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
      /**
       * @notice - transfer tokens from one user to another
-      * @param - _to : the user to receive the tokens
-      * @param - _from : the user to send the tokens  
-      * @param - _amount: the amount to transfer
-      * @return - returns a boolean
+      * @param  _to : the user to receive the tokens
+      * @param  _from : the user to send the tokens  
+      * @param  _amount: the amount to transfer
+      * @return  bool a boolean
       */
     function transferFrom(address _from, address _to, uint256 _amount) public override returns (bool) {
         _mintAccruedInterest(_from);
         _mintAccruedInterest(_to);
 
         if(_amount == type(uint256).max) {
-            amount = balanceOf(_from);
+            _amount = balanceOf(_from);
         }
 
         if(balanceOf(_to) == 0) {
@@ -120,19 +116,19 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
      /**
      * @notice - Calculate the interest that has accumulated since last update
-     * @param - _user:  The user to calculate the interest accumulated for
-     * @return - The interest that has accrued
+     * @param  _user:  The user to calculate the interest accumulated for
+     * @return linearInterest The interest that has accrued
      */
     function calculateUserAccumulatedInterestSinceLastUpdate(address _user) internal view returns(uint256 linearInterest) {
         // calculate the time since the last update
         // calculate the linear growth
         uint256 timeElasped = block.timestamp - s_userLastUpdatedTimeStamp[_user];
-        linearInterest = PRECISION_FACTOR + (s_userInterestRate[user] * timeElasped);
+        linearInterest = PRECISION_FACTOR + (s_userInterestRate[_user] * timeElasped);
 
     }
     /**
      * @notice - Mint accured interest to the user since the last time they interacted with the protocol(mint, burn, transfer)
-     * @param - _user: The user to mint the tokens to
+     * @param  _user: The user to mint the tokens to
      * 
      */
     function _mintAccruedInterest(address _user) internal {
@@ -152,20 +148,20 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
     /**
      * Mint the user tokens when they deposit into the vault
-     * @param - _to: The user to mint the tokens to
-     * @param - _amount: The amount of tokens to mint
+     * @param  _to: The user to mint the tokens to
+     * @param  _amount: The amount of tokens to mint
      */
     function mint(address _to, uint256 _amount) external onlyRole(MINT_AND_BURN_ROLE) {
-        _mintAccruedInterest(_to)
-         setUsersInterestRate(_to)
-        _mint(_to, _amount)
+        _mintAccruedInterest(_to);
+          s_userInterestRate[_to] = s_interestRate;
+        _mint(_to, _amount);
     }
 
     function burn(address _from, uint256 _amount) external onlyRole(MINT_AND_BURN_ROLE){
         if(_amount == type(uint256).max) {
-            _amount = balanceOf(_from)
+            _amount = balanceOf(_from);
         }
-        _mintAccruedInterest(_to);
+        _mintAccruedInterest(_from);
         _burn(_from, _amount);
     }
 
@@ -179,11 +175,11 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
      
     /**
      * @notice - gets the interest rate for that user
-     * @param - _user : user to get the interest rate for
+     * @param  _user : user to get the interest rate for
      * 
      */
     function getUserInterestRate(address _user) external view returns (uint256) {
-         return userInterestRate[_user];
+         return s_userInterestRate[_user];
     }
 
 

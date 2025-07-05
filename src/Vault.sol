@@ -16,11 +16,11 @@ contract Vault {
      i_rebaseToken = _rebaseToken;
   }
 
-  // allows the contract to receive eth
+    // allows the contract to receive eth
     receive() external payable {}
 
     function deposit() external payable {
-        i_rebaseToken.mint(msg.sender, msg.value, i_rebaseToken.getInterestRate());
+        i_rebaseToken.mint(msg.sender, msg.value);
         emit Deposit(msg.sender, msg.value);
     }
     /**
@@ -40,4 +40,6 @@ contract Vault {
         }
         emit Redeem(msg.sender, _amount);
     }
+
+    
 }
