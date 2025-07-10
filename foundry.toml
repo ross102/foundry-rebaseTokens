@@ -2,6 +2,7 @@
 src = "src"
 out = "out"
 libs = ["lib"]
+rpc_endpoints = { eth = "https://eth-sepolia.g.alchemy.com/v2/niduWb27Hl6YoGtfQI_OeByLpflMHxkT", arb= "https://arb-sepolia.g.alchemy.com/v2/niduWb27Hl6YoGtfQI_OeByLpflMHxkT" }
 remappings = [
     '@openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/',
     '@ccip/=lib/ccip/',
