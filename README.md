@@ -1,4 +1,4 @@
-#  🪙 Cross-Chain Rebase Token with Chainlink CCIP
+# Cross-Chain Rebase Token with Chainlink CCIP
 
 This project implements a cross-chain rebasing ERC20 token architecture using [Chainlink CCIP](https://chain.link/ccip) for secure token transfers between EVM-compatible chains.
 
@@ -8,12 +8,9 @@ It includes:
 - **RebaseTokenPool** – A CCIP-compatible pool that handles token transfers across chains.
 - **Vault** – A local contract that mints and burns tokens based on user activity.
 
+## Contracts
 
----
-
-## 🔧 Contracts
-
-### ✅ RebaseToken
+### RebaseToken
 
 An ERC20-compatible token with additional features:
 - Supports **rebasing** – balances grow over time based on interest.
@@ -22,9 +19,7 @@ An ERC20-compatible token with additional features:
   - `mint(address to, uint256 amount, uint256 userInterestRate)`
   - `burn(address from, uint256 amount)`
 
----
-
-### ✅ RebaseTokenPool
+### RebaseTokenPool
 
 Extends Chainlink’s `TokenPool` and overrides key CCIP lifecycle methods:
 - `lockOrBurn()`:
@@ -36,27 +31,13 @@ Extends Chainlink’s `TokenPool` and overrides key CCIP lifecycle methods:
 
 This allows users’ rebasing logic to be preserved across chains.
 
----
-
-### ✅ Vault
+###  Vault
 
 A simple utility contract that:
 - Holds and manages `RebaseToken` balances.
 - Can **mint or burn tokens** based on internal logic.
-- Useful for staking, deposits, or any mechanism that controls minting.
-
----
-
-## 🔁 Cross-Chain Token Flow
-
-1. User calls `lockOrBurn()` on **source chain pool**.
-2. Tokens are burned and **interest rate is encoded** in `destPoolData`.
-3. CCIP transmits data to destination chain.
-4. Destination pool calls `releaseOrMint()`, **minting tokens** with the original interest rate.
-
----
-
-## 🧪 Local Testing
+  
+##  Local Testing
 
 Uses [Foundry](https://book.getfoundry.sh/) and [Chainlink Local Simulator](https://github.com/smartcontractkit/chainlink-local) for testing cross-chain behavior.
 
@@ -64,8 +45,6 @@ Uses [Foundry](https://book.getfoundry.sh/) and [Chainlink Local Simulator](http
 - Source chain: Sepolia (Fork)
 - Destination chain: Arbitrum Sepolia (Fork)
 - Simulator provides mock router, registry, and token proxy contracts.
-
----
 
 ## Usage
 
