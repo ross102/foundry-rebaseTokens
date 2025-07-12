@@ -31,23 +31,13 @@ Extends Chainlink’s `TokenPool` and overrides key CCIP lifecycle methods:
 
 This allows users’ rebasing logic to be preserved across chains.
 
-### ✅ Vault
+###  Vault
 
 A simple utility contract that:
 - Holds and manages `RebaseToken` balances.
 - Can **mint or burn tokens** based on internal logic.
-- Useful for staking, deposits, or any mechanism that controls minting.
-
-
-## 🔁 Cross-Chain Token Flow
-
-1. User calls `lockOrBurn()` on **source chain pool**.
-2. Tokens are burned and **interest rate is encoded** in `destPoolData`.
-3. CCIP transmits data to destination chain.
-4. Destination pool calls `releaseOrMint()`, **minting tokens** with the original interest rate.
-
-
-## 🧪 Local Testing
+  
+##  Local Testing
 
 Uses [Foundry](https://book.getfoundry.sh/) and [Chainlink Local Simulator](https://github.com/smartcontractkit/chainlink-local) for testing cross-chain behavior.
 
