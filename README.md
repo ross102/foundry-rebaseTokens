@@ -1,4 +1,4 @@
-#  🪙 Cross-Chain Rebase Token with Chainlink CCIP
+# Cross-Chain Rebase Token with Chainlink CCIP
 
 This project implements a cross-chain rebasing ERC20 token architecture using [Chainlink CCIP](https://chain.link/ccip) for secure token transfers between EVM-compatible chains.
 
@@ -7,7 +7,6 @@ It includes:
 - **RebaseToken** – A custom ERC20 token that supports per-user interest rates and rebasing logic.
 - **RebaseTokenPool** – A CCIP-compatible pool that handles token transfers across chains.
 - **Vault** – A local contract that mints and burns tokens based on user activity.
-
 
 ---
 
