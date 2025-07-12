@@ -9,20 +9,18 @@ import {Vault} from "../src/Vault.sol";
 import {IRebaseToken} from "../src/interfaces/IRebaseToken.sol";
 
 contract RebaseTest is Test {
-
     RebaseToken public rebaseToken;
     Vault public vault;
-    
+
     address public user = makeAddr("user");
     address public owner = makeAddr("owner");
     uint256 public SEND_VALUE = 1e5;
-    
 
     function setUp() public {
         vm.startPrank(owner);
         rebaseToken = new RebaseToken();
         vault = new Vault(IRebaseToken(address(rebaseToken)));
-         vm.deal(owner, 2 ether);
+        vm.deal(owner, 2 ether);
         (bool success,) = payable(address(vault)).call{value: 1e18}("");
         require(success, "ETH transfer failed");
         rebaseToken.grantMintAndBurnRole(address(vault));
@@ -31,8 +29,8 @@ contract RebaseTest is Test {
 
     function addRewardsToVault(uint256 amount) public {
         // send some rewards to the vault using the receive function
-      (bool success,) = payable(address(vault)).call{value: amount}("");
-       require(success, "ETH transfer failed");
+        (bool success,) = payable(address(vault)).call{value: amount}("");
+        require(success, "ETH transfer failed");
     }
 
     function testDepositLinear(uint256 amount) public {
@@ -82,8 +80,8 @@ contract RebaseTest is Test {
     }
 
     function testRedeemAfterTimeHasPassed(uint256 depositAmount, uint256 time) public {
-        time = bound(time, 1000, type(uint96).max); 
-        depositAmount = bound(depositAmount, 1e5, type(uint96).max); 
+        time = bound(time, 1000, type(uint96).max);
+        depositAmount = bound(depositAmount, 1e5, type(uint96).max);
 
         // Deposit funds
         vm.deal(user, depositAmount);
@@ -137,7 +135,7 @@ contract RebaseTest is Test {
         vm.stopPrank();
     }
 
-     function testDeposit(uint256 amount) public {
+    function testDeposit(uint256 amount) public {
         amount = bound(amount, 1e3, type(uint96).max);
         vm.deal(user, amount);
         vm.prank(user);
@@ -216,12 +214,12 @@ contract RebaseTest is Test {
         uint256 initialInterestRate = rebaseToken.getInterestRate();
         vm.assume(newInterestRate > initialInterestRate);
         vm.startPrank(owner);
-         vm.expectPartialRevert(bytes4(RebaseToken.RebaseToken__InterestRateCanOnlyDecrease.selector));
+        vm.expectPartialRevert(bytes4(RebaseToken.RebaseToken__InterestRateCanOnlyDecrease.selector));
         rebaseToken.setInterestRate(newInterestRate);
         vm.stopPrank();
     }
-  
-   function testGetPrincipleAmount() public {
+
+    function testGetPrincipleAmount() public {
         uint256 amount = 1e5;
         vm.deal(user, amount);
         vm.prank(user);

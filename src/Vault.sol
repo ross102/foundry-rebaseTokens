@@ -4,17 +4,16 @@ pragma solidity ^0.8.24;
 import "./interfaces/IRebaseToken.sol";
 
 contract Vault {
-  IRebaseToken private immutable i_rebaseToken;
+    IRebaseToken private immutable i_rebaseToken;
 
-   event Deposit(address indexed user, uint256 amount);
-   event Redeem(address indexed user, uint256 amount);
+    event Deposit(address indexed user, uint256 amount);
+    event Redeem(address indexed user, uint256 amount);
 
-   error Vault__RedeemFailed();
+    error Vault__RedeemFailed();
 
-
-  constructor(IRebaseToken _rebaseToken) {
-     i_rebaseToken = _rebaseToken;
-  }
+    constructor(IRebaseToken _rebaseToken) {
+        i_rebaseToken = _rebaseToken;
+    }
 
     // allows the contract to receive eth
     receive() external payable {}
@@ -28,6 +27,7 @@ contract Vault {
      * @param _amount the amount being redeemed
      *
      */
+
     function redeem(uint256 _amount) external {
         if (_amount == type(uint256).max) {
             _amount = i_rebaseToken.balanceOf(msg.sender);
@@ -40,6 +40,4 @@ contract Vault {
         }
         emit Redeem(msg.sender, _amount);
     }
-
-    
 }

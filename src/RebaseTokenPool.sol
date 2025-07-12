@@ -7,14 +7,12 @@ import {IERC20} from "@ccip/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {IRebaseToken} from "./interfaces/IRebaseToken.sol";
 
-
 contract RebaseTokenPool is TokenPool {
-
-  constructor(IERC20 token,  address[] memory allowlist, address rmnProxy, address router)
+    constructor(IERC20 token, address[] memory allowlist, address rmnProxy, address router)
         TokenPool(token, allowlist, rmnProxy, router)
     {}
 
-     /// @notice burns the tokens on the source chain
+    /// @notice burns the tokens on the source chain
     function lockOrBurn(Pool.LockOrBurnInV1 calldata lockOrBurnIn)
         external
         virtual
@@ -48,5 +46,4 @@ contract RebaseTokenPool is TokenPool {
 
         return Pool.ReleaseOrMintOutV1({destinationAmount: releaseOrMintIn.amount});
     }
-
 }

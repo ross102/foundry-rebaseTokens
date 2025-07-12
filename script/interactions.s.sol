@@ -5,7 +5,6 @@ import {Script} from "forge-std/Script.sol";
 import {Vault} from "../src/Vault.sol";
 
 contract DepositScript is Script {
-  
     uint256 private constant SEND_VALUE = 0.01 ether;
 
     /**
